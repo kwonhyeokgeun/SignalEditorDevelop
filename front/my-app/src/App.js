@@ -25,7 +25,7 @@ const themeOptions = [
   { value: "default", label: "라이트 모드" },
 ];
 const projectMeetingSetting = () => {
-  socket = io("https://localhost", {
+  socket = io("https://k8e103.p.ssafy.io:443", {
     secure: true,
     cors: { origin: "*" },
   });
@@ -104,6 +104,7 @@ function EditorTest() {
       }
     });
     socket.emit("get_editor", { roomId });
+    console.log("get_editor 소켓 보냄")
   }, []);
 
   useEffect(() => {
