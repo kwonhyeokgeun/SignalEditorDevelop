@@ -510,8 +510,8 @@ io.on("connection", function (socket) {
 
   //처음 접속시 리액트 코드편집기의 파일 정보 받기
   socket.on("get_editor", (data) => {
-    //roomId = data.roomId;
-    //socket.join(roomId); //나중에 지워주기!!!!!!!!
+    roomId = data.roomId;
+    socket.join(roomId); //나중에 지워주기!!!!!!!!
 
     console.log("getEditor", roomId);
     if (typeof files[roomId] === "undefined") {
