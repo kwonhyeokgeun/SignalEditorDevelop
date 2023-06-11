@@ -1,2 +1,4 @@
-# SignalEditorDevelop
-SignalEditorDevelop
+fileLine이라는 변수를 둬서 파일의 버전별 라인을 기록해둠  
+이를 통해 버전 문제가 발생했을때 같은 라인이 아니라면 그냥 반영시킴  
+
+1. 기존의 입력이 씹히는 문제를 최소화함(같은 줄인 경우에만 롤백하도록)  

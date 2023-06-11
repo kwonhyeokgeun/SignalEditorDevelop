@@ -49,6 +49,7 @@ let streams = {
 
 let cursors = {};
 let files = {};
+let fileLine = {}
 
 const pc_config = {
   iceServers: [
@@ -520,6 +521,7 @@ io.on("connection", function (socket) {
         version: 0,
         content: "hello world!!",
       };
+      fileLine[roomId] = [0,0,0,0,0,0,0,0,0,0]
     }
     console.log("open version:", files[roomId].version);
 
@@ -534,26 +536,51 @@ io.on("connection", function (socket) {
     let file = files[roomId];
     //console.log(roomId, "입력받음", changes.text);
 
-    //동기화 문제발생
-    if (version < file.version) {
-      console.log(
-        "롤백발생! 유저",
-        userName,
-        "의 버전:",
-        version,
-        "파일 버전",
-        file.version,
-        ", 수정내용:",
-        changes.text
-      );
-      socket.emit("rollback_editor", {
-        version: file.version,
-        content: file.content,
-      });
-    } // 문제없음
+    //버전 문제발생
+    if (version <= file.version) {
+      //같은 라인인지 확인
+      let isSameLine=false;
+      for(let l=version+1; l<= file.version; l++){
+        if( changes.from.line == fileLine[roomId][l%10] ){
+          isSameLine = true
+          break
+        }
+      }
+
+      //같은 라인이거나 enter사용
+      if( isSameLine || changes.text.length==2){
+        console.log(
+          "롤백발생! 유저",
+          userName,
+          "의 버전:",
+          version,
+          "파일 버전",
+          file.version,
+          ", 수정내용:",
+          changes.text
+        );
+        socket.emit("rollback_editor", {
+          version: file.version,
+          content: file.content,
+        });
+      }
+      //다른라인인 경우
+      else{ 
+	console.log("다른줄")
+        file.content = content;
+        file.version++;
+        fileLine[roomId][file.version%10] = changes.from.line
+	      console.log(file.version, changes.from.line)
+        socket.broadcast
+          .to(roomId)
+          .emit("change_editor", { version: file.version, changes });
+      }
+    } 
+    //버전 문제없음
     else {
       file.content = content;
       file.version++;
+      fileLine[roomId][file.version%10] = changes.from.line
       socket.broadcast
         .to(roomId)
         .emit("change_editor", { version: file.version, changes });
