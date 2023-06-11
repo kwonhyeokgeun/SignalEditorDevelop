@@ -554,6 +554,7 @@ io.on("connection", function (socket) {
     else {
       file.content = content;
       file.version++;
+      console.log(changes.text)
       socket.broadcast
         .to(roomId)
         .emit("change_editor", { version: file.version, changes });
