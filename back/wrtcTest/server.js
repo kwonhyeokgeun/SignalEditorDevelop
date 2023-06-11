@@ -49,7 +49,7 @@ let streams = {
 
 let cursors = {};
 let files = {};
-let fileInfo = {}
+let fileLine = {}
 
 const pc_config = {
   iceServers: [
@@ -521,7 +521,7 @@ io.on("connection", function (socket) {
         version: 0,
         content: "hello world!!",
       };
-      fileInfo[roomId] = [0,0,0,0,0,0,0,0,0,0]
+      fileLine[roomId] = [0,0,0,0,0,0,0,0,0,0]
     }
     console.log("open version:", files[roomId].version);
 
@@ -541,7 +541,7 @@ io.on("connection", function (socket) {
       //같은 라인인지 확인
       let isSameLine=false;
       for(let l=version+1; l<= file.version; l++){
-        if( changes.from.line == fileInfo[roomId][l%10] ){
+        if( changes.from.line == fileLine[roomId][l%10] ){
           isSameLine = true
           break
         }
@@ -569,7 +569,7 @@ io.on("connection", function (socket) {
 	console.log("다른줄")
         file.content = content;
         file.version++;
-        fileInfo[roomId][file.version%10] = changes.from.line
+        fileLine[roomId][file.version%10] = changes.from.line
 	      console.log(file.version, changes.from.line)
         socket.broadcast
           .to(roomId)
@@ -580,7 +580,7 @@ io.on("connection", function (socket) {
     else {
       file.content = content;
       file.version++;
-      fileInfo[roomId][file.version%10] = changes.from.line
+      fileLine[roomId][file.version%10] = changes.from.line
       socket.broadcast
         .to(roomId)
         .emit("change_editor", { version: file.version, changes });
