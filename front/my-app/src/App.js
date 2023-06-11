@@ -54,6 +54,9 @@ function EditorTest() {
       let content = data.content
       console.log("rollback_editor", content)
       console.log("cursor", codemirror.getCursor())
+      const cursor = codemirror.getCursor()
+      codemirror.setValue(content)
+      codemirror.setCursor({ line: cursor.line, ch: cursor.ch })
     })
   }
 
@@ -99,7 +102,7 @@ function EditorTest() {
           roomId,
           changes,
           content,
-          version: version++,
+          version: ++version,
         })
       }
     })
