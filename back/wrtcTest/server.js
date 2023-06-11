@@ -49,6 +49,7 @@ let streams = {
 
 let cursors = {};
 let files = {};
+let fileInfo = {}
 
 const pc_config = {
   iceServers: [
@@ -82,7 +83,6 @@ io.on("connection", function (socket) {
   let socketId;
   let edited_file;
   let isDup = false;
-  let fileInfo = [0,0,0,0,0,0,0,0,0,0]
 
   //새로 접속했을때 방의 정보(유저수)를 얻음
   socket.on("room_info", (data) => {
@@ -521,6 +521,7 @@ io.on("connection", function (socket) {
         version: 0,
         content: "hello world!!",
       };
+      fileInfo[roomId] = [0,0,0,0,0,0,0,0,0,0]
     }
     console.log("open version:", files[roomId].version);
 
@@ -536,11 +537,11 @@ io.on("connection", function (socket) {
     //console.log(roomId, "입력받음", changes.text);
 
     //버전 문제발생
-    if (version < file.version) {
+    if (version <= file.version) {
       //같은 라인인지 확인
       let isSameLine=false;
       for(let l=version+1; l<= file.version; l++){
-        if( fileInfo[version%10] == fileInfo[l%10] ){
+        if( changes.from.line == fileInfo[roomId][l%10] ){
           isSameLine = true
           break
         }
@@ -565,9 +566,11 @@ io.on("connection", function (socket) {
       }
       //다른라인인 경우
       else{ 
+	console.log("다른줄")
         file.content = content;
         file.version++;
-        fileInfo[file.version%10] = changes.from.line
+        fileInfo[roomId][file.version%10] = changes.from.line
+	      console.log(file.version, changes.from.line)
         socket.broadcast
           .to(roomId)
           .emit("change_editor", { version: file.version, changes });
@@ -577,7 +580,7 @@ io.on("connection", function (socket) {
     else {
       file.content = content;
       file.version++;
-      fileInfo[file.version%10] = changes.from.line
+      fileInfo[roomId][file.version%10] = changes.from.line
       socket.broadcast
         .to(roomId)
         .emit("change_editor", { version: file.version, changes });
