@@ -534,7 +534,7 @@ io.on("connection", function (socket) {
     let file = files[roomId];
     //console.log(roomId, "입력받음", changes.text);
 
-    //동기화 문제발생
+    //동기화 문제 고려x
     if (version < file.version) {
       console.log(
         "롤백발생! 유저",
@@ -545,11 +545,12 @@ io.on("connection", function (socket) {
         file.version,
         ", 수정내용:",
         changes.text
-      );
-      socket.emit("rollback_editor", {
-        version: file.version,
-        content: file.content,
-      });
+      )
+      file.content = content;
+      file.version++;
+      socket.broadcast
+        .to(roomId)
+        .emit("change_editor", { version: file.version, changes });
     } // 문제없음
     else {
       file.content = content;
