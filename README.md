@@ -1,2 +1,4 @@
-# SignalEditorDevelop
-SignalEditorDevelop
+버전을 확인해서 롤백을 실행함  
+
+1. 어느 줄이든 버전 문제가 발생한 경우 롤백을 함 즉 동기화 문제는 해결  
+2. 자신의 입력이 무시되는 경우가 발생함!!  
