@@ -535,7 +535,7 @@ io.on("connection", function (socket) {
     //console.log(roomId, "입력받음", changes.text);
 
     //동기화 문제발생
-    if (version < file.version) {
+    if (version <= file.version) {
       console.log(
         "롤백발생! 유저",
         userName,

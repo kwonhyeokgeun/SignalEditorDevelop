@@ -99,7 +99,7 @@ function EditorTest() {
           roomId,
           changes,
           content,
-          version: version++,
+          version: ++version,
         })
       }
     })
